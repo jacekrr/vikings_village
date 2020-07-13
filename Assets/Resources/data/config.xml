@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<config>
+  <setting name="game">VV</setting>
+  <setting name="engineVer">0.5</setting>
+  <setting name="DEBUG">false</setting>
+  <setting name="saveDir">Save</setting>
+  <setting name="steamID">11111</setting>
+  <setting name="preciseTargetFov">60</setting>
+  <setting name="defaultTargetFov">50</setting>
+
+  <setting name="usePlayerController">false</setting>
+
+  <module>TimeAndWeather</module>
+  <module>IdleGame</module>
+
+  <assetBundle name="logoscene" initializing="true">
+    <load>logoSceneRoot</load>
+  </assetBundle>
+  <assetBundle name="vvmain">
+    <load>vvmainRoot</load>
+  </assetBundle>
+
+  
+
+</config>

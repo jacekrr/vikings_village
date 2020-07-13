@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- PL strings -->
+  <string name="game_init">Inicjalizuję grę</string>
+  <string name="game_loadingabs">Ładuję zasoby</string>
+  <string name="game_configure">Ładuję konfigurację</string>
+  <string name="game_initializing">Konfigiruję grę</string>
+  <string name="game_loading">Ładuję zapisany stan gry</string>
+  <string name="game_inprogress">Trwa rozgrywka</string>
+
+</resources>

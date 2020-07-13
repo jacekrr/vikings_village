@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+<attrTypes class="string" costL1="string" prodL1="string" qCost="float" qProd="float"/>
+<attrDefaults class="none" costL1="" prodL1=""/>
+
+<entities>
+  <entity type="CentralPlace" class="storage" costL1="25Z;25W;25J" prodL1="50Z;50W;50J" qCost="1.5" qProd="1.25"/>
+  <entity type="Skarbiec" class="storage" costL1="60J" prodL1="100Z" qCost="1.75" qProd="1.6"/>
+</entities>
+</root>
