@@ -14,6 +14,10 @@ namespace EJROrbEngine.Characters
     public class SceneCharacter : BaseSceneObject
     {      
         public PersonCharacter TheCharacter { get; private set;}
+        protected override void OnAwake()
+        {
+
+        }
         protected override void OnStart()
         {
             TheCharacter = new PlayerCharacter(CharactersModuleManager.Instance.FindCharacterData(Type));

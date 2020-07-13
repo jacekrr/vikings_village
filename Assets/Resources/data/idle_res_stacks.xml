@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+<attrTypes resName="string" />
+<attrDefaults resName="Gold" />
+
+<idle_res_stacks>
+  <entity type="StackOfFood" resName="Food" />
+  <entity type="StackOfGold" resName="Gold" />
+  <entity type="StackOfVikings" resName="Vikings" />
+</idle_res_stacks>
+</root>

@@ -92,8 +92,10 @@ namespace EJROrbEngine.SceneObjects
             PrepareToThrowOut();
         }
 
-      
+        protected override void OnAwake()
+        {
 
+        }
         protected override void OnStart()
         {
            

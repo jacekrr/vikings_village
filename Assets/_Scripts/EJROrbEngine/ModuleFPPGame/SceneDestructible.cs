@@ -85,9 +85,13 @@ namespace EJROrbEngine.FPPGame
 
         }
 
-        protected override void OnStart()
+        protected override void OnAwake()
         {
             DestructibleData = GetComponent<PrefabTemplate>().DataObjects.GetDataAddon("destructibles");
+        }
+
+        protected override void OnStart()
+        {
             Health = (float)DestructibleData["health"];
             if ((string)DestructibleData["barPrefab"] != "")
             {

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+<attrTypes  costL1="string" prodL1="string" qCost="float" qProd="float"/>
+<attrDefaults costL1="" prodL1=""/>
+
+<idle_res_storages>
+  <entity type="CentralPlace" costL1="Gold=25;Vikings=25;Food=25" prodL1="Gold=50;Vikings=50;Food=50" qCost="1.5" qProd="1.25"/>
+  <entity type="Treasury" costL1="Food=60" prodL1="Gold=100" qCost="1.75" qProd="1.6"/>
+</idle_res_storages>
+</root>

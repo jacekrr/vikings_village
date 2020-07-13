@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+<attrTypes costL1="string" prodL1="string" qCost="float" qProd="float"/>
+<attrDefaults costL1="" prodL1=""/>
+
+<idle_producers>
+  <entity type="Huts"  costL1="Gold=10;Food=10" prodL1="Vikings=1" qCost="1.65" qProd="1.5"/>
+  
+</idle_producers>
+</root>

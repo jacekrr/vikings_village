@@ -1,2 +1,4 @@
+0.7 - ???
+   - PlatformSelector zostal wyniesiony ponad silnik, bedzie modyfikowany w zaleznosci od dostepnosci konkretnych wersji klientow
 0.6 - 13.07.2020
   - pierwsza wersja engine EJROrb wyprowadzona do osobnego repo jacekrr/ejrorb - zawiera podstawowe przystosowania do gry o kodzie Rabbits oraz Gułag

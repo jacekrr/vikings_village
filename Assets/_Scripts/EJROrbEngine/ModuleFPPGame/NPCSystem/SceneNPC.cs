@@ -51,6 +51,10 @@ namespace EJROrbEngine.NPCSystem
                 _attacker.PerformScanHit();
         }
 
+        protected override void OnAwake()
+        {
+
+        }
         protected override void OnStart()
         {
             _animatorComp = GetComponent<Animator>();

@@ -7,6 +7,7 @@
 // **** Copyrights: EJR Sp. z o.o.
 
 using ClientAbstract;
+using EJROrbEngine.IdleGame.UI;
 using EJROrbEngine.SceneObjects;
 using System.Collections.Generic;
 using System.Xml.Linq;
@@ -17,8 +18,12 @@ namespace EJROrbEngine.IdleGame
    
     public sealed class IdleGameModuleManager : MonoBehaviour, IEngineModule
     {
+        private Dictionary<string, BaseDataAddon> _producers;            // producers definitions
+        private Dictionary<string, BaseDataAddon> _storages;            // resource storages defninitions
+        private Dictionary<string, BaseDataAddon> _resStacks;            // resource stacks definitions
+        private Dictionary<string, ResourceData> _cumulatedResources;   // all resource storages cumulated here (no stacks of resources located on map)
 
-        private Dictionary<string, BaseDataAddon> _entities;      // wzorce danych obiektow gry
+        private IdleResUI _idleUI;
 
         public static IdleGameModuleManager Instance { get; private set; }
         private void Awake()
@@ -26,19 +31,35 @@ namespace EJROrbEngine.IdleGame
             if (Instance != null && Instance != this)
                 throw new System.Exception("Niedozwolone tworzenie kolejnej kopii klasy IdleGameModuleManager");
             Instance = this;
-            _entities = new Dictionary<string, BaseDataAddon>();
-
-
-
+            _producers = new Dictionary<string, BaseDataAddon>();
+            _storages = new Dictionary<string, BaseDataAddon>();
+            _resStacks = new Dictionary<string, BaseDataAddon>();
+            _cumulatedResources = new Dictionary<string, ResourceData>();
+            _idleUI = gameObject.AddComponent<IdleResUI>();
         }
 
         public void OnLoad(IGameState gameState)
         {
-            // do nothing
+            int resNumber = gameState.GetIntKey("_mstor_numb");
+            for(int i = 0; i < resNumber; i++)
+            {
+                string resName = gameState.GetStringKey("_mstor_nam_r" + i);
+                string resStr = gameState.GetStringKey("_mstor_str_r" + i);
+                ResourceData rd = new ResourceData(resName);
+                rd.FromSaveGameValue(resStr);
+                _cumulatedResources.Add(resName, rd);
+            }
         }
         public void OnSave(IGameState gameState)
         {
-            // do nothing
+            int index = 0;
+            foreach(ResourceData rd in _cumulatedResources.Values)
+            {
+                gameState.SetKey("_mstor_str_r" + index, rd.ToSaveGameValue());
+                gameState.SetKey("_mstor_nam_r" + index, rd.Type);
+                index++;
+            }
+            gameState.SetKey("_mstor_numb", _cumulatedResources.Count);
         }
         public void OnNewGame()
         {
@@ -46,24 +67,46 @@ namespace EJROrbEngine.IdleGame
         }
         public void OnConfigure()
         {
-            if (_entities.Count == 0)
+            if (_producers.Count == 0)
             {
                 try
                 {
-                    if (EJRConsts.Instance["useIdleEngine"] == "true")
+                    //_producers
+                    XmlDataInfo prodInfo = Utils.LoadXmlAssetFile("data/idle_producers", "idle_producers");
+                    if (prodInfo != null)
                     {
-                        //_entities
-                        XmlDataInfo entInfo = Utils.LoadXmlAssetFile("data/entities", "entities");
-                        if (_entities != null)
+                        foreach (XElement element in prodInfo.MainNodeElements)
                         {
-                            foreach (XElement element in entInfo.MainNodeElements)
-                            {
-                                BaseDataAddon newItem = new BaseDataAddon();
-                                newItem.LoadData(entInfo, element);
-                                _entities.Add(newItem.Type, newItem);
-                            }
+                            BaseDataAddon newItem = new BaseDataAddon();
+                            newItem.LoadData(prodInfo, element);
+                            _producers.Add(newItem.Type, newItem);
                         }
                     }
+                    //_storages
+                    XmlDataInfo storInfo = Utils.LoadXmlAssetFile("data/idle_res_storages", "idle_res_storages");
+                    if (storInfo != null)
+                    {
+                        foreach (XElement element in storInfo.MainNodeElements)
+                        {
+                            BaseDataAddon newItem = new BaseDataAddon();
+                            newItem.LoadData(storInfo, element);
+                            _storages.Add(newItem.Type, newItem);
+                        }
+                    }
+
+                    //_resStacks
+                    XmlDataInfo resInfo = Utils.LoadXmlAssetFile("data/idle_res_stacks", "idle_res_stacks");
+                    if (resInfo != null)
+                    {
+                        foreach (XElement element in resInfo.MainNodeElements)
+                        {
+                            BaseDataAddon newItem = new BaseDataAddon();
+                            newItem.LoadData(resInfo, element);
+                            _resStacks.Add(newItem.Type, newItem);
+                        }
+                    }
+
+
 
                 }
                 catch (System.Exception wyjatek)
@@ -74,21 +117,80 @@ namespace EJROrbEngine.IdleGame
         }
         public void OnConfigureObjectRequest(SceneObjects.PrefabTemplate ao)
         {
-            BaseDataAddon entData = FindEntity(ao.Type);
-            if (entData != null)
+            BaseDataAddon prodData = FindProducer(ao.Type);
+            if (prodData != null)
             {
-                ao.DataObjects.AddDataAddon("entities", entData);
-              //  ao.gameObject.AddComponent<SceneEntity>();
+                ao.DataObjects.AddDataAddon("idle_producers", prodData);
+                ao.gameObject.AddComponent<SceneProducer>();
             }
-
+            BaseDataAddon stoData = FindStorage(ao.Type);
+            if (stoData != null)
+            {
+                ao.DataObjects.AddDataAddon("idle_res_storages", stoData);
+                ao.gameObject.AddComponent<SceneStorage>();
+            }
+            BaseDataAddon resData = FindResStack(ao.Type);
+            if (resData != null)
+            {
+                ao.DataObjects.AddDataAddon("idle_res_stacks", resData);
+                ao.gameObject.AddComponent<SceneStorage>();
+            }
         }
 
-        //próbuje dopasować wzorzec przedmiotu do podanego typu i jeśli mu się uda - zwraca go
-        public BaseDataAddon FindEntity(string type)
+        //próbuje dopasować wzorzec producenta do podanego typu i jeśli mu się uda - zwraca go
+        public BaseDataAddon FindProducer(string type)
         {
-            if (_entities.ContainsKey(type))
-                return _entities[type];
+            if (_producers.ContainsKey(type))
+                return _producers[type];
             return null;
+        }
+        //próbuje dopasować wzorzec magazynu do podanego typu i jeśli mu się uda - zwraca go
+        public BaseDataAddon FindStorage(string type)
+        {
+            if (_storages.ContainsKey(type))
+                return _storages[type];
+            return null;
+        }
+        //próbuje dopasować wzorzec kupki zasobow do podanego typu i jeśli mu się uda - zwraca go
+        public BaseDataAddon FindResStack(string type)
+        {
+            if (_resStacks.ContainsKey(type))
+                return _resStacks[type];
+            return null;
+        }
+
+        //refresh information about present storages - it will create a storage space for every resource
+        public void RefreshStorage()
+        {
+            SceneStorage[] allStorages = FindObjectsOfType<SceneStorage>();
+            Dictionary<string, ResourceData> newCumulatedStorage = new Dictionary<string, ResourceData>();
+            foreach (SceneStorage store in allStorages)
+            {
+                List<ResourceData> storeProduction = store.GetProductionOnLevel(store.Level);
+                foreach (ResourceData rd in storeProduction)
+                {
+                    if (!newCumulatedStorage.ContainsKey(rd.Type))
+                        newCumulatedStorage.Add(rd.Type, new ResourceData(rd.Type));
+                    newCumulatedStorage[rd.Type].MaximumValue += rd.MaximumValue;
+                }
+            }
+            foreach (ResourceData newData in newCumulatedStorage.Values)
+                if (_cumulatedResources.ContainsKey(newData.Type))
+                    newData.CurrentValue = _cumulatedResources[newData.Type].CurrentValue;
+            _cumulatedResources.Clear();
+            foreach (string type in newCumulatedStorage.Keys)
+                _cumulatedResources.Add(type, newCumulatedStorage[type]);
+
+            RefreshResUI();
+            
+        }
+
+        public void RefreshResUI()
+        {
+            foreach(ResourceData rd in _cumulatedResources.Values)
+            {
+                _idleUI.RefreshResData(rd);
+            }
         }
     }
 }

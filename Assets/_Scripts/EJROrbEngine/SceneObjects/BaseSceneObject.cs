@@ -38,13 +38,18 @@ namespace EJROrbEngine.SceneObjects
 
         }
 
-
+        protected abstract void OnAwake();
         protected abstract void OnStart();
         protected abstract void OnUpdate();
 
-        private void Start()
+        private void Awake()
         {
             _AOComponent = GetComponent<ActiveObject>();
+            OnAwake();
+        }
+        private void Start()
+        {
+
             OnStart();
         }
         private void Update()

@@ -102,6 +102,10 @@ namespace EJROrbEngine.SceneObjects
             }
         }
 
+        protected override void OnAwake()
+        {
+
+        }
         protected override void OnStart()
         {
             IsAttacking = false;
