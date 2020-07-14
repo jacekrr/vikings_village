@@ -21,10 +21,9 @@ namespace EJROrbEngine.FPPGame.UI
 {
 
 
-    public class FPPUIManager : MonoBehaviour
+    public class FPPUIManager : UIManager
     {
-        public static FPPUIManager Instance { get; private set; }
-        public const float TOUCH_DISTANCE = 3.5f;     // maksymalny zasieg do obiektu aby mozna bylo z nim przeprowadzic interakcje
+        public new static FPPUIManager Instance { get; private set; }
         public const float CZASMALEGOINFO = 4f;       // czas wysświetlania się małego komunikatu tekstowego w UI
     //    public const float DYSTANSPOKAZYWANIAKANWY = 4.5f;  // dystans pokazywania dynamicznych kanw dialogow [m.]
     //    public const int ROZMIARKROPEK_X = 64;
@@ -43,7 +42,6 @@ namespace EJROrbEngine.FPPGame.UI
         private Text[] _tekstyOpisuPrzedmiotu;
         private Text[] _tekstyMalegoInfo;
         private SpriteRenderer _wskaznikKamery;        
-        private GameObject _poprzednioPatrzylismy;
         private float _licznikCzasuMalegoInfo;
         private IInputManager _menedzerWejscia;
         
@@ -68,12 +66,10 @@ namespace EJROrbEngine.FPPGame.UI
             Instance = this;
          }
 
-        void Start()
+        protected override void OnStart()
         {
-            _menedzerWejscia = GameStarter.StartManager.Instance.Platform.CreateInputManager(gameObject);
-            _menedzerWejscia.ListenInput(OnLogicalAction);
+            base.OnStart();
             _wskaznikKamery = Camera.main.GetComponentInChildren<SpriteRenderer>();             // GameManager.Instance.ThePlayerController.GetComponentInChildren<SpriteRenderer>();           
-            _poprzednioPatrzylismy = gameObject; //patrzy tu sam na siebie, tym trickiem wymuszamy zmiane w pierwszym Update
             if(HandsController == null)
                 Debug.LogError("Brak kontrolera rąk!");
             if (HealthText == null)
@@ -115,37 +111,32 @@ namespace EJROrbEngine.FPPGame.UI
            // OdswiezKrkopkiSzybkosciCzasu();
         }
 
-        void Update()
+        protected override void LookTargetChanged()
         {
-            Vector3 hitPoint;
-            GameObject patrzymy = CameraLooksOn(TOUCH_DISTANCE, out hitPoint);
-            if (_poprzednioPatrzylismy != patrzymy)
+            base.LookTargetChanged();
+            ActiveObject patrzyActive = null;
+            if (CurrentCameraLookObject != null)
             {
-                ActiveObject patrzyActive = null;
-                if (patrzymy != null)
-                {
-                    patrzyActive = patrzymy.GetComponent<ActiveObject>();
-                    if (patrzyActive == null && patrzymy.GetComponent<HitPoint>() != null && patrzymy.GetComponent<HitPoint>().ParentObject != null)
-                        patrzyActive = patrzymy.GetComponent<HitPoint>().ParentObject.GetComponent<ActiveObject>();
-                }
-                if (patrzyActive != null)
-                {
-                    _wskaznikKamery.sprite = WskaznikWlaczony;
-                    foreach(Text t in _tekstyOpisuPrzedmiotu)
-                        t.text = patrzyActive.RedableName;
-                    KanwaOpisu.gameObject.SetActive(true);
-                }
-                else
-                {
-                    _wskaznikKamery.sprite = WskaznikWylaczony;
-                    KanwaOpisu.gameObject.SetActive(false);
-                }
-            }           
-            if (patrzymy != null && patrzymy.GetComponent<Button>() != null)
-                patrzymy.GetComponent<Button>().Select();
-            else if(_poprzednioPatrzylismy != null && _poprzednioPatrzylismy.GetComponent<Button>() != null)
-                EventSystem.current.SetSelectedGameObject(null);
-            _poprzednioPatrzylismy = patrzymy;
+                patrzyActive = CurrentCameraLookObject.GetComponent<ActiveObject>();
+                if (patrzyActive == null && CurrentCameraLookObject.GetComponent<HitPoint>() != null && CurrentCameraLookObject.GetComponent<HitPoint>().ParentObject != null)
+                    patrzyActive = CurrentCameraLookObject.GetComponent<HitPoint>().ParentObject.GetComponent<ActiveObject>();
+            }
+            if (patrzyActive != null)
+            {
+                _wskaznikKamery.sprite = WskaznikWlaczony;
+                foreach (Text t in _tekstyOpisuPrzedmiotu)
+                    t.text = patrzyActive.RedableName;
+                KanwaOpisu.gameObject.SetActive(true);
+            }
+            else
+            {
+                _wskaznikKamery.sprite = WskaznikWylaczony;
+                KanwaOpisu.gameObject.SetActive(false);
+            }
+        }
+        protected override void OnUpdate()
+        {
+            base.OnUpdate();
         //    TekstZlota.text = TlumaczCiagow.PodajCiag("Zloto") + ((int) MenedzerGry.InstancjaMenedzeraGry.ObiektGracza.PobierzAtrybut("Zloto")).ToString();
             ReactInputRaw();
               if (_licznikCzasuMalegoInfo >= 0)
@@ -168,30 +159,9 @@ namespace EJROrbEngine.FPPGame.UI
             RefreshAccuracyIcons();
         }
         
-        public GameObject CameraLooksOn(float maxDistance, out Vector3 hitPoint)
-        {
-            if (maxDistance <= 0)
-                maxDistance = 0.1f;
-            hitPoint = Vector3.zero;
-            RaycastHit hit;
-            Vector3 centerPoint = _wskaznikKamery.transform.position;
-            if (Physics.Raycast(centerPoint, Camera.main.transform.forward, out hit))
-                if (hit.distance < maxDistance)
-                {
-                    hitPoint = hit.point;
-                    return hit.collider.gameObject;
-                }
-            // jezeli punkt centralny nie patrzy na obiekt, to sprawdzamy rzutowanie kulą dzięki czemu możemy sprawdzić na co patrzy kamera pod szerszym kątem
-            if (Physics.SphereCast(centerPoint, 0.3f, Camera.main.transform.forward, out hit))
-                if (hit.distance < maxDistance)
-                {
-                    hitPoint = hit.point;
-                    return hit.collider.gameObject;
-                }
-            return null;
-        }
+       
 
-        //jak CameraLooksOn, lecz wprowadzona jest nieodkladnosc do symulowania strzalow z broni palnej w trybie scanhit. Wartosc scanHitInaccuracy podana jest w pikselach rozrzutu
+        //jak UIManager.CameraLooksOn, lecz wprowadzona jest nieodkladnosc do symulowania strzalow z broni palnej w trybie scanhit. Wartosc scanHitInaccuracy podana jest w pikselach rozrzutu
         public GameObject CameraLooksOnScanHit(float maxDistance, float scanHitInaccuracy, out Vector3 hitPoint)
         {
             if (maxDistance <= 0)
@@ -226,8 +196,9 @@ namespace EJROrbEngine.FPPGame.UI
         {
             OdswiezKrkopkiSzybkosciCzasu();
         }*/
-        public void OnLogicalAction(LogicalAction action)
+        public override void OnLogicalAction(LogicalAction action)
         {
+            base.OnLogicalAction(action);
             if (action == LogicalAction.MainAction)
             {
                 HandsController.PerformAction(false);
@@ -247,14 +218,12 @@ namespace EJROrbEngine.FPPGame.UI
                 HandsController.SwitchWeaponMode();
             if (action == LogicalAction.Interaction)
             {
-                if (_poprzednioPatrzylismy != null)
+                if (CurrentCameraLookObject != null)
                 {
-                    if (_poprzednioPatrzylismy.GetComponent<Button>() != null)
-                        _poprzednioPatrzylismy.GetComponent<Button>().onClick.Invoke();
-                    else if (_poprzednioPatrzylismy.GetComponent<SceneItem>() != null)
-                        InventoryObject.Add(_poprzednioPatrzylismy.GetComponent<SceneItem>());
-                    else if (_poprzednioPatrzylismy.GetComponent<Events.InteractiveEventActivator>())
-                        _poprzednioPatrzylismy.GetComponent<Events.InteractiveEventActivator>().HandleInteraction();
+                    if (CurrentCameraLookObject.GetComponent<SceneItem>() != null)
+                        InventoryObject.Add(CurrentCameraLookObject.GetComponent<SceneItem>());
+                    else if (CurrentCameraLookObject.GetComponent<Events.InteractiveEventActivator>())
+                        CurrentCameraLookObject.GetComponent<Events.InteractiveEventActivator>().HandleInteraction();
                     /*                    else if (_poprzednioPatrzylismy.GetComponent<UIHandlu>() != null)
                                             _poprzednioPatrzylismy.GetComponent<UIHandlu>().Uaktywnij();
                                         else if (_poprzednioPatrzylismy.GetComponent<UIInformacyjne>() != null)
@@ -262,9 +231,6 @@ namespace EJROrbEngine.FPPGame.UI
                                         else if (_poprzednioPatrzylismy.GetComponent<UIStatystyk>() != null)
                                             _poprzednioPatrzylismy.GetComponent<UIStatystyk>().Uaktywnij();
                     */
-                    else
-                        if (_poprzednioPatrzylismy.GetComponent<Button>() != null)
-                        _poprzednioPatrzylismy.GetComponent<Button>().onClick.Invoke();
                 }
             }
             if (action == LogicalAction.DropItem)

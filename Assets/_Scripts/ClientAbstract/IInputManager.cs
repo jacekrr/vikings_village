@@ -7,6 +7,8 @@
 // **** Copyrights: EJR Sp. z o.o.
 
 
+using UnityEngine;
+
 namespace ClientAbstract
 {
 
@@ -26,5 +28,6 @@ namespace ClientAbstract
         void ListenInput(ExecuteLogicalActionDelegate listener);
         void EndInputListening(ExecuteLogicalActionDelegate listener);
         bool IsLogicalBooleanState(LogicalBooleanState state);
+        Vector2 GetLastScreenInput();
     }
 }

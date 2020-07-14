@@ -23,7 +23,8 @@ namespace EJROrbEngine.IdleGame
         private Dictionary<string, BaseDataAddon> _resStacks;            // resource stacks definitions
         private Dictionary<string, ResourceData> _cumulatedResources;   // all resource storages cumulated here (no stacks of resources located on map)
 
-        private IdleResUI _idleUI;
+        private IdleResUI _idleResUI;
+        private IdleUIManager _idleUI;
 
         public static IdleGameModuleManager Instance { get; private set; }
         private void Awake()
@@ -35,7 +36,9 @@ namespace EJROrbEngine.IdleGame
             _storages = new Dictionary<string, BaseDataAddon>();
             _resStacks = new Dictionary<string, BaseDataAddon>();
             _cumulatedResources = new Dictionary<string, ResourceData>();
-            _idleUI = gameObject.AddComponent<IdleResUI>();
+            _idleResUI = gameObject.AddComponent<IdleResUI>();
+            _idleUI = gameObject.AddComponent<IdleUIManager>();
+
         }
 
         public void OnLoad(IGameState gameState)
@@ -133,7 +136,7 @@ namespace EJROrbEngine.IdleGame
             if (resData != null)
             {
                 ao.DataObjects.AddDataAddon("idle_res_stacks", resData);
-                ao.gameObject.AddComponent<SceneStorage>();
+                ao.gameObject.AddComponent<SceneResStack>();
             }
         }
 
@@ -185,12 +188,28 @@ namespace EJROrbEngine.IdleGame
             
         }
 
+        //refreshes values of resources on its UI
         public void RefreshResUI()
         {
             foreach(ResourceData rd in _cumulatedResources.Values)
             {
-                _idleUI.RefreshResData(rd);
+                _idleResUI.RefreshResData(rd);
             }
+        }
+
+        //adds a ResourceData stock of resource to storage, returns rest - ammount of not added resources
+        public ResourceData AddResourcesToStorage(ResourceData val)
+        {
+            ResourceData rest = new ResourceData(val);
+            if (_cumulatedResources.ContainsKey(val.Type))
+            {
+                
+                if (_cumulatedResources[val.Type].CurrentValue + val.CurrentValue > _cumulatedResources[val.Type].MaximumValue)
+                    rest.CurrentValue = val.CurrentValue - _cumulatedResources[val.Type].FreeValue;
+                _cumulatedResources[val.Type] += val;
+            }
+            RefreshResUI();
+            return rest;
         }
     }
 }

@@ -66,9 +66,9 @@ namespace EJROrbEngine.ActiveObjects
 
         private void InternalSpawn(string prefabName)
         {
-            if (prefabName == null || prefabName == "" || !GameManager.Instance.IsModuleLoaded("FPPGame"))
+            if (prefabName == null || prefabName == "" )
                 return;
-            if(prefabName.Contains("[attr]"))
+            if(prefabName.Contains("[attr]") && !GameManager.Instance.IsModuleLoaded("FPPGame"))
             {
                 prefabName = prefabName.Replace("[attr]", "");
                 string []tokens = prefabName.Split('=');

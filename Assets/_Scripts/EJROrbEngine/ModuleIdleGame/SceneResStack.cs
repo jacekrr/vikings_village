@@ -17,7 +17,9 @@ namespace EJROrbEngine.IdleGame
 {
     public class SceneResStack : BaseSceneObject
     {
-        public BaseDataAddon ProducerData { get; private set; }
+        public BaseDataAddon TheData { get; private set; }
+        public ResourceData InnerResources { get; private set; }
+        private float _autoGrabTime;
 
         public override void SaveGame(IGameState gameState)
         {
@@ -30,9 +32,24 @@ namespace EJROrbEngine.IdleGame
 
         }
 
+        //click reaction
+        public void OnClick()
+        {
+            ResourceData added = IdleGameModuleManager.Instance.AddResourcesToStorage(InnerResources);
+            InnerResources -= added;
+            if(InnerResources.CurrentValue == 0)
+            {
+                GetComponent<ActiveObjects.ActiveObject>().RemoveFromGame();
+            }
+        }
+
         protected override void OnAwake()
         {
-            ProducerData = GetComponent<PrefabTemplate>().DataObjects.GetDataAddon("idle_res_stacks");
+            TheData = GetComponent<PrefabTemplate>().DataObjects.GetDataAddon("idle_res_stacks");
+            InnerResources = new ResourceData((string)TheData["resName"]);
+            InnerResources.MaximumValue = (float)TheData["defaultAmmount"]; 
+            InnerResources.CurrentValue = (float)TheData["defaultAmmount"];
+            _autoGrabTime = (float)TheData["autoGrab"];
         }
         protected override void OnStart()
         {
@@ -41,7 +58,15 @@ namespace EJROrbEngine.IdleGame
         }
         protected override void OnUpdate()
         {
-
+            if(_autoGrabTime > 0)
+            {
+                _autoGrabTime -= Time.deltaTime;
+                if(_autoGrabTime <= 0)
+                {
+                    _autoGrabTime = 0;
+                    OnClick();
+                }
+            }
         }
     }
 

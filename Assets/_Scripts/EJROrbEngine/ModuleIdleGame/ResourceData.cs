@@ -28,6 +28,11 @@ namespace EJROrbEngine.IdleGame
                 if (_currentValue > MaximumValue) _currentValue = MaximumValue;
             }
         }
+        //rest between max and current value (free space in terms of resource storaging)
+        public float FreeValue
+        {
+            get { return MaximumValue - CurrentValue; }
+        }
         //multiplier is number of power of 10s that should multiply the CurrentValue, for example CurrentValue==4.5 and Multiplier==3 means 4500 real value
         public int Multiplier { get; private set; }
         //the maximum value available to be stockpiled
@@ -39,6 +44,13 @@ namespace EJROrbEngine.IdleGame
             Multiplier = 1;
         }
 
+        public ResourceData(ResourceData val)
+        {
+            Type = val.Type;
+            Multiplier = val.Multiplier;
+            MaximumValue = val.MaximumValue;
+            CurrentValue = val.CurrentValue;
+        }
         public void FromSaveGameValue(string dataStr)
         {
             string[] tokens = dataStr.Split(';');
@@ -65,5 +77,27 @@ namespace EJROrbEngine.IdleGame
             sb.Append(MaximumValue.ToString());
             return sb.ToString();
         }
+
+        // maths section, overriden operators
+        public static ResourceData operator +(ResourceData a, ResourceData b)
+        {
+            if (a.Type != b.Type)
+                throw new System.Exception("Adding diffrent types of resources: " + a.Type + " and " + b.Type);
+            ResourceData rd = new ResourceData(a.Type);
+            rd.MaximumValue = a.MaximumValue;
+            rd.CurrentValue = a.CurrentValue + b.CurrentValue;
+            return rd;
+        }
+ 
+        public static ResourceData operator -(ResourceData a, ResourceData b)
+        {
+            if (a.Type != b.Type)
+                throw new System.Exception("Adding diffrent types of resources: " + a.Type + " and " + b.Type);
+            ResourceData rd = new ResourceData(a.Type);
+            rd.MaximumValue = a.MaximumValue;
+            rd.CurrentValue = a.CurrentValue - b.CurrentValue;
+            return rd;
+        }
+       
     }
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-<attrTypes resName="string" />
-<attrDefaults resName="Gold" />
+<attrTypes resName="string" defaultAmmount="float" autoGrab="float" />
+<attrDefaults resName="Gold" defaultAmmount="0" autoGrab="0"/>
 
 <idle_res_stacks>
-  <entity type="StackOfFood" resName="Food" />
-  <entity type="StackOfGold" resName="Gold" />
-  <entity type="StackOfVikings" resName="Vikings" />
+  <entity type="FoodSmallStack" resName="Food" defaultAmmount="20" autoGrab="0 "/>
+  <entity type="GoldSmallStack" resName="Gold" defaultAmmount="20" autoGrab="20"/>
+  <entity type="VikingsSmallStack" resName="Vikings" defaultAmmount="20" autoGrab="10"/>
 </idle_res_stacks>
 </root>

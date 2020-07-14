@@ -14,6 +14,11 @@ namespace ClientAndroid
     public class AndroidInputManager : MonoBehaviour, IInputManager
     {
         private event ExecuteLogicalActionDelegate ZdarzenieLogicznejAkcji;
+        private Vector2 _lastScreenInput;
+        public Vector2 GetLastScreenInput()
+        {
+            return _lastScreenInput;
+        }
 
         public bool IsLogicalBooleanState(LogicalBooleanState state)
         {
@@ -29,10 +34,29 @@ namespace ClientAndroid
             ZdarzenieLogicznejAkcji -= sluchacz;
         }             
 
+        void Start()
+        {
+            _lastScreenInput = Vector2.zero;
+        }
+
         void Update()
         {
             if (Input.GetKeyDown(KeyCode.I))
                 ZdarzenieLogicznejAkcji?.Invoke(LogicalAction.ExpandInventory);
+            if (Input.GetMouseButtonDown(0))
+            {
+                _lastScreenInput = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                ZdarzenieLogicznejAkcji?.Invoke(LogicalAction.Interaction);
+                ZdarzenieLogicznejAkcji?.Invoke(LogicalAction.Any);
+
+            }
+            else if (Input.touchCount > 0)
+            {
+                _lastScreenInput = Input.GetTouch(0).position;
+                ZdarzenieLogicznejAkcji?.Invoke(LogicalAction.Interaction);
+                ZdarzenieLogicznejAkcji?.Invoke(LogicalAction.Any);
+            }
+            else _lastScreenInput = Vector2.zero;
         }
     }
 }

@@ -13981,7 +13981,7 @@ MonoBehaviour:
   LOD: 0.2
   LODPower: 3
   customMesh: {fileID: 0}
-  material: {fileID: 2100000, guid: 813e29eefe994bd42bf26e15abbdb15e, type: 2}
+  material: {fileID: 2100000, guid: 9a077abe0b9866e48b65eb39428825ce, type: 2}
   sun: {fileID: 0}
   sizeX: 30
   sizeZ: 30
@@ -26844,6 +26844,58 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &3672944252321079691
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 300125089728192850}
+  - component: {fileID: 8995538295800193183}
+  m_Layer: 0
+  m_Name: SmallFoodSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &300125089728192850
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3672944252321079691}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 0.5, z: 10.7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5762190470063263035}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8995538295800193183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3672944252321079691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bee79ffd51f85e741b95391865a8e048, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectsToGenerate:
+  - FoodSmallStack
+  Propabilities: 64000000
+  OffsetY: 0.05
+  AlwaysChangeSeed: 0
+  AutoSpawn: 1
+  RandomRadius: 0
+  MultipleSpawn: 0
+  CollisionRadius: 0.1
 --- !u!1 &3673663366852982186
 GameObject:
   m_ObjectHideFlags: 0
@@ -28568,6 +28620,37 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &4003752276204287911
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5762190470063263035}
+  m_Layer: 0
+  m_Name: StartSpawners
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5762190470063263035
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4003752276204287911}
+  m_LocalRotation: {x: -0, y: 0.7350916, z: -0, w: 0.67796785}
+  m_LocalPosition: {x: -25.98, y: 0.2, z: 122.24}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 300125089728192850}
+  m_Father: {fileID: 5035975120092738521}
+  m_RootOrder: 24
+  m_LocalEulerAnglesHint: {x: 0, y: 94.630005, z: 0}
 --- !u!1 &4017423094326416999
 GameObject:
   m_ObjectHideFlags: 0
@@ -50148,6 +50231,7 @@ Transform:
   - {fileID: 4859246697870514368}
   - {fileID: 8725538177996026652}
   - {fileID: 1768651081744786433}
+  - {fileID: 5762190470063263035}
   m_Father: {fileID: 5810803947073699482}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
