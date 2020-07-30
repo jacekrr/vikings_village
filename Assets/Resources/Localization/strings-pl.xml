@@ -8,4 +8,37 @@
   <string name="game_loading">Ładuję zapisany stan gry</string>
   <string name="game_inprogress">Trwa rozgrywka</string>
 
+  <string name="building_level_info">Poziom {0}</string>
+  <string name="building_current_prod">Produkcja na poziomie {0} wynosi:{1} na s.\nProdukcja co: {2} s.</string>
+  <string name="building_current_stor">Na poziomie {0} zapewnia magazyn dla:{1}.</string>
+  <string name="building_next_upgrade">Następny duży wzrost produkcji na poziomie {0}.</string>
+  <string name="building_cost">Koszt podniesienia {0} poziomów: {1}.</string>
+  <string name="building_cost1">Koszt podniesienia o 1 poziom: {0}.</string>
+  <string name="build_now">Zbuduj: {0}</string>
+  <string name="building_unavailable">Budynek niedostępny</string>
+  <string name="building_build_cost">Koszt budowy: {0}</string>
+  <string name="building_build_requires">\nWymagania: {0}</string>
+  <string name="button_max">Maks.</string>
+  <string name="button_close">Zamknij</string>
+  <string name="button_upgrade">Podnieś</string>
+  <string name="button_build">Zbuduj</string>
+
+  <string name="ResNameGold">Złota</string>
+  <string name="ResNameFood">Pozywienia</string>
+  <string name="ResNameVikings">Wikingów</string>
+
+  <!-- buildings -->  
+  <string name="BuildingNameCentralPlace">Plac centralny</string>
+  <string name="BuildingDescCentralPlace">"... a kto mężnego serce, niech w górę wzniesie topór swój!"\nRagnar Żelaznoręki\nPlac centralny to miejsce spotkań wikingów. To tutaj wodzowie wygłaszają swe płomienne przemowy zachęcając plemię do działania.Tutaj zbierają też zasoby niezbędne do wypraw i działań.\nPlac centralny to podstawowy magazyn surowców w grze.</string>
+  <string name="BuildingNameTreasury">Skarbiec</string>
+  <string name="BuildingDescTreasury">"Przyjdź złoto do złota, a w stal cię zmienimy."\nSkarbiec to najpilniej strzeżone miejsce w wiosce. To tu wikingowie gromadzą swoje najcenniejsze skarby.\nSkarbiec to największy magazyn Złota w grze.</string>
+  <string name="BuildingNameHuts">Chaty</string>
+  <string name="BuildingDescHuts">"Nie żelazo jest najważniejsze w podbojach, lecz młode, waleczne serca!"\nNieznany wódz\nChaty to zacisze domowe wikingów. Tu pod bezpiecznym okiem rodziny, dorastają dzieci, a młodzież uczy się jak zostać dzielnym dziedzicem swych przodków.\nChaty to podstawowe miejsce produkcji Wikingów.</string>
+  <string name="BuildingNameFoodSmallStack">Zasób Pożywienia</string>
+  <string name="BuildingDescFoodSmallStack">Zasób Pożywienia</string>
+  <string name="BuildingNameGoldSmallStack">Zasób Złota</string>
+  <string name="BuildingDescGoldSmallStack">Zasób Złota</string>
+  <string name="BuildingNameVikingsSmallStack">Zasób Wikingów</string>
+  <string name="BuildingDescVikingsSmallStack">Zasób Wikingów</string>
+  
 </resources>

@@ -43,6 +43,22 @@ namespace ClientAndroid
         {
             if (Input.GetKeyDown(KeyCode.I))
                 ZdarzenieLogicznejAkcji?.Invoke(LogicalAction.ExpandInventory);
+            else if (Input.GetKeyDown(KeyCode.O))
+                ZdarzenieLogicznejAkcji?.Invoke(LogicalAction.ZoomOut);
+            else if (Input.GetAxis("Horizontal") < 0)
+                ZdarzenieLogicznejAkcji?.Invoke(LogicalAction.MoveLeft);
+            else if (Input.GetAxis("Horizontal") > 0)
+                ZdarzenieLogicznejAkcji?.Invoke(LogicalAction.MoveRight);
+            else if (Input.GetAxis("Vertical") > 0)
+                ZdarzenieLogicznejAkcji?.Invoke(LogicalAction.MoveForward);
+            else if (Input.GetAxis("Vertical") < 0)
+                ZdarzenieLogicznejAkcji?.Invoke(LogicalAction.MoveBackward);
+            else if (Input.GetAxis("Mouse ScrollWheel") > 0)
+                ZdarzenieLogicznejAkcji?.Invoke(LogicalAction.ZoomIn);
+            else if (Input.GetAxis("Mouse ScrollWheel") < 0)
+                ZdarzenieLogicznejAkcji?.Invoke(LogicalAction.ZoomOut);
+
+
             if (Input.GetMouseButtonDown(0))
             {
                 _lastScreenInput = new Vector2(Input.mousePosition.x, Input.mousePosition.y);

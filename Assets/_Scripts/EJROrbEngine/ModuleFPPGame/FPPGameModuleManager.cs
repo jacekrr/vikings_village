@@ -45,6 +45,10 @@ namespace EJROrbEngine.FPPGame
         {
             TheInventory.LoadGame(gameState);
         }
+        public void CleanupBeforeSave()
+        {
+            // do nothing
+        }
         public void OnSave(IGameState gameState)
         {
             TheInventory.SaveGame(gameState);

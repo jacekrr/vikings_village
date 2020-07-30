@@ -32,6 +32,10 @@ namespace EJROrbEngine.Crafting
         {
             // do nothing
         }
+        public void CleanupBeforeSave()
+        {
+            // do nothing
+        }
         public void OnSave(IGameState gameState)
         {
             // do nothing

@@ -9,8 +9,6 @@
 
 using ClientAbstract;
 using EJROrbEngine.SceneObjects;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace EJROrbEngine.IdleGame
@@ -31,24 +29,33 @@ namespace EJROrbEngine.IdleGame
             base.LoadGame(gameState);
 
         }
+        public void SetProduction(ResourceData produced)
+        {
+            InnerResources = new ResourceData(produced);
+        }
 
         //click reaction
         public void OnClick()
         {
-            ResourceData added = IdleGameModuleManager.Instance.AddResourcesToStorage(InnerResources);
-            InnerResources -= added;
-            if(InnerResources.CurrentValue == 0)
+            ConsumeStack();
+            if ( InnerResources.CurrentValue <= BigInteger.Zero)
             {
                 GetComponent<ActiveObjects.ActiveObject>().RemoveFromGame();
             }
+        }
+        //consume - add to storage
+        public void ConsumeStack()
+        {
+            ResourceData added = IdleGameModuleManager.Instance.AddResourcesToStorage(InnerResources);
+            InnerResources -= added;
         }
 
         protected override void OnAwake()
         {
             TheData = GetComponent<PrefabTemplate>().DataObjects.GetDataAddon("idle_res_stacks");
             InnerResources = new ResourceData((string)TheData["resName"]);
-            InnerResources.MaximumValue = (float)TheData["defaultAmmount"]; 
-            InnerResources.CurrentValue = (float)TheData["defaultAmmount"];
+            InnerResources.MaximumValue = new BigInteger((string)TheData["defaultAmmount"]); 
+            InnerResources.CurrentValue = new BigInteger((string)TheData["defaultAmmount"]);
             _autoGrabTime = (float)TheData["autoGrab"];
         }
         protected override void OnStart()

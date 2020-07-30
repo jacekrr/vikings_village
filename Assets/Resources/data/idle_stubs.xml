@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <attrTypes  cost="string" targetPrefab="string" requires="string"/>
+  <attrDefaults cost="" targetPrefab=""  requires=""/>
+
+  <idle_stubs>
+    <entity type="CentralPlaceStub" cost="Gold=5;Vikings=5;Food=5" targetPrefab="CentralPlace" requires=""/>
+    <entity type="HutsStub"  cost="Food=20" targetPrefab="Huts" requires="CentralPlace"/>
+    <entity type="HunterStub"  cost="Gold=20" targetPrefab="Hunter" requires="CentralPlace"/>
+    <entity type="MarketStub"  cost="Vikings=20" targetPrefab="Market" requires="CentralPlace"/>
+
+    <entity type="TreasuryStub" cost="Food=240;Vikings=240" targetPrefab="Treasury" requires="Market;Huts;Hunter"/>
+    <entity type="TavernStub"  cost="Gold=360" targetPrefab="Tavern" requires="Market;Huts;Hunter"/>
+
+  </idle_stubs>
+</root>

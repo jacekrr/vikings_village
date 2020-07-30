@@ -44,12 +44,11 @@ namespace EJROrbEngine.SceneObjects
 
         private void Awake()
         {
-            _AOComponent = GetComponent<ActiveObject>();
             OnAwake();
         }
         private void Start()
         {
-
+            _AOComponent = GetComponent<ActiveObject>();
             OnStart();
         }
         private void Update()

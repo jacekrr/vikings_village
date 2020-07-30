@@ -14,7 +14,7 @@ namespace ClientAbstract
 
     public enum LogicalAction
     {
-        MoveLeft, MoveRight, MoveForward,MoveBackward, Jump, PickupItem, Interaction, Crafting, ExpandInventory, InventoryRight, InventoryLeft, DropItem, TimeSlower, TimeFaster, TimeClick, ExitToMenu, Help, Guide, NewGame, ContinueGame, ExitGame, ChangeDifficultyLevel,ChangeQualityLevel, MainAction, SecondaryAction, UseItem, SwitchMode, Any
+        MoveLeft, MoveRight, MoveForward,MoveBackward, Jump, PickupItem, Interaction, Crafting, ExpandInventory, InventoryRight, InventoryLeft, DropItem, TimeSlower, TimeFaster, TimeClick, ExitToMenu, Help, Guide, NewGame, ContinueGame, ExitGame, ChangeDifficultyLevel,ChangeQualityLevel, MainAction, SecondaryAction, UseItem, SwitchMode, ZoomIn, ZoomOut, Any
     }
     public enum LogicalBooleanState
     {

@@ -57,6 +57,10 @@ namespace EJROrbEngine.EndlessWorld
             reinitAll(false, false);
          //   RefreshCurrentBiom();
         }
+        public void CleanupBeforeSave()
+        {
+            // do nothing
+        }
         public void OnSave(IGameState gameState)
         {
             // do nothing

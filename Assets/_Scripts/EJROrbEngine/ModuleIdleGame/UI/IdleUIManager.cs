@@ -9,15 +9,19 @@
 
 using ClientAbstract;
 using System;
+using TMPro;
 using UnityEngine;
 
 namespace EJROrbEngine.IdleGame.UI
 {
-
-
+    //Idle module UI Manager, responds on actions, coordinates UI behaviours
     public class IdleUIManager : UIManager
     {
         public new static IdleUIManager Instance { get; private set; }
+        public IdleBuildingInfoUI BuildingInfoUI;
+        public IdleBuildingBuildUI BuildingBuildUI;
+        public GameObject BuildingLabelTemplate;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -28,7 +32,18 @@ namespace EJROrbEngine.IdleGame.UI
         protected override void OnStart()
         {
             base.OnStart();
-           
+            BuildingInfoUI = FindObjectOfType<IdleBuildingInfoUI>();
+            BuildingBuildUI = FindObjectOfType<IdleBuildingBuildUI>();
+            BuildingLabelTemplate = GameObject.Find("BuildingLabelTemplate");
+            if (BuildingInfoUI == null)
+                Debug.LogError("BuildingInfoUI is null in IdleUIManager");
+            if (BuildingBuildUI == null)
+                Debug.LogError("BuildingBuildUI is null in IdleUIManager");
+            if (BuildingLabelTemplate == null)
+                Debug.LogError("BuildingLabelTemplate is null in IdleUIManager");
+            BuildingInfoUI.Hide();
+            BuildingBuildUI.Hide();
+            BuildingLabelTemplate.gameObject.SetActive(false);
         }
 
         protected override void LookTargetChanged()
@@ -49,12 +64,32 @@ namespace EJROrbEngine.IdleGame.UI
             {
                 Vector3 hitPoint;
                 GameObject lookedObj = LastScreenInputLooksOn(1000, out hitPoint);
-                if (lookedObj != null)
+                if (lookedObj != null && !IsAnyUIOpened() )
                 {
                     if (lookedObj.GetComponent<SceneResStack>() != null)
                         lookedObj.GetComponent<SceneResStack>().OnClick();
+                    if (lookedObj.GetComponent<BaseSceneBuilding>() != null)
+                        BuildingInfoUI.Show(lookedObj.GetComponent<BaseSceneBuilding>());
+                    if (lookedObj.GetComponent<SceneStub>() != null)
+                        BuildingBuildUI.Show(lookedObj.GetComponent<SceneStub>());
                 }
             }
+            else if (action == LogicalAction.MoveLeft)
+                Camera.main.gameObject.GetComponent<IdleCameraController>().OnCameraMove(new Vector3(1, 0, 0));
+            else if (action == LogicalAction.MoveRight)
+                Camera.main.gameObject.GetComponent<IdleCameraController>().OnCameraMove(new Vector3(-1, 0, 0));
+            else if(action == LogicalAction.MoveForward)
+                Camera.main.gameObject.GetComponent<IdleCameraController>().OnCameraMove(new Vector3(0, 0, -1));
+            else if(action == LogicalAction.MoveBackward)
+                Camera.main.gameObject.GetComponent<IdleCameraController>().OnCameraMove(new Vector3(0, 0, 1));
+            else if(action == LogicalAction.ZoomIn)
+                Camera.main.gameObject.GetComponent<IdleCameraController>().OnCameraMove(new Vector3(0, -1, 0));
+            else if(action == LogicalAction.ZoomOut)
+                Camera.main.gameObject.GetComponent<IdleCameraController>().OnCameraMove(new Vector3(0, 1, 0));
+        }
+        private bool IsAnyUIOpened()
+        {
+            return BuildingInfoUI.isActiveAndEnabled || BuildingBuildUI.isActiveAndEnabled;
         }
     }
 }

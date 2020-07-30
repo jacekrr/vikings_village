@@ -20,8 +20,10 @@ namespace EJROrbEngine.IdleGame
     {
         private Dictionary<string, BaseDataAddon> _producers;            // producers definitions
         private Dictionary<string, BaseDataAddon> _storages;            // resource storages defninitions
+        private Dictionary<string, BaseDataAddon> _stubs;               // buildings stubs defninitions
         private Dictionary<string, BaseDataAddon> _resStacks;            // resource stacks definitions
         private Dictionary<string, ResourceData> _cumulatedResources;   // all resource storages cumulated here (no stacks of resources located on map)
+        private List<BaseSceneBuilding> _buildingsBuilt;                //all buildings built (on scene)
 
         private IdleResUI _idleResUI;
         private IdleUIManager _idleUI;
@@ -34,11 +36,13 @@ namespace EJROrbEngine.IdleGame
             Instance = this;
             _producers = new Dictionary<string, BaseDataAddon>();
             _storages = new Dictionary<string, BaseDataAddon>();
+            _stubs = new Dictionary<string, BaseDataAddon>();
             _resStacks = new Dictionary<string, BaseDataAddon>();
             _cumulatedResources = new Dictionary<string, ResourceData>();
             _idleResUI = gameObject.AddComponent<IdleResUI>();
             _idleUI = gameObject.AddComponent<IdleUIManager>();
-
+            _buildingsBuilt = new List<BaseSceneBuilding>();
+            Camera.main.gameObject.AddComponent<IdleCameraController>();
         }
 
         public void OnLoad(IGameState gameState)
@@ -64,6 +68,16 @@ namespace EJROrbEngine.IdleGame
             }
             gameState.SetKey("_mstor_numb", _cumulatedResources.Count);
         }
+
+        public void CleanupBeforeSave()
+        {
+            SceneResStack[] resStacks = FindObjectsOfType<SceneResStack>();
+            foreach (SceneResStack srs in resStacks)
+            {
+                srs.ConsumeStack();
+                srs.GetComponent<ActiveObjects.ActiveObject>().RemoveFromGame();
+            }
+        }
         public void OnNewGame()
         {
             // do nothing
@@ -80,9 +94,9 @@ namespace EJROrbEngine.IdleGame
                     {
                         foreach (XElement element in prodInfo.MainNodeElements)
                         {
-                            BaseDataAddon newItem = new BaseDataAddon();
-                            newItem.LoadData(prodInfo, element);
-                            _producers.Add(newItem.Type, newItem);
+                            BaseDataAddon newProd = new BaseDataAddon();
+                            newProd.LoadData(prodInfo, element);
+                            _producers.Add(newProd.Type, newProd);
                         }
                     }
                     //_storages
@@ -91,31 +105,39 @@ namespace EJROrbEngine.IdleGame
                     {
                         foreach (XElement element in storInfo.MainNodeElements)
                         {
-                            BaseDataAddon newItem = new BaseDataAddon();
-                            newItem.LoadData(storInfo, element);
-                            _storages.Add(newItem.Type, newItem);
+                            BaseDataAddon newStor = new BaseDataAddon();
+                            newStor.LoadData(storInfo, element);
+                            _storages.Add(newStor.Type, newStor);
                         }
                     }
-
                     //_resStacks
                     XmlDataInfo resInfo = Utils.LoadXmlAssetFile("data/idle_res_stacks", "idle_res_stacks");
                     if (resInfo != null)
                     {
                         foreach (XElement element in resInfo.MainNodeElements)
                         {
-                            BaseDataAddon newItem = new BaseDataAddon();
-                            newItem.LoadData(resInfo, element);
-                            _resStacks.Add(newItem.Type, newItem);
+                            BaseDataAddon newRes = new BaseDataAddon();
+                            newRes.LoadData(resInfo, element);
+                            _resStacks.Add(newRes.Type, newRes);
                         }
                     }
-
-
-
+                    //_stubs
+                    XmlDataInfo stubInfo = Utils.LoadXmlAssetFile("data/idle_stubs", "idle_stubs");
+                    if (stubInfo != null)
+                    {
+                        foreach (XElement element in stubInfo.MainNodeElements)
+                        {
+                            BaseDataAddon newStub = new BaseDataAddon();
+                            newStub.LoadData(stubInfo, element);
+                            _stubs.Add(newStub.Type, newStub);
+                        }
+                    }
                 }
                 catch (System.Exception wyjatek)
                 {
                     Debug.LogError("Ogólny wyjątek: " + wyjatek.Message);
                 }
+                _buildingsBuilt.Clear();             
             }
         }
         public void OnConfigureObjectRequest(SceneObjects.PrefabTemplate ao)
@@ -125,18 +147,26 @@ namespace EJROrbEngine.IdleGame
             {
                 ao.DataObjects.AddDataAddon("idle_producers", prodData);
                 ao.gameObject.AddComponent<SceneProducer>();
+                _buildingsBuilt.Add(ao.GetComponent<BaseSceneBuilding>());
             }
             BaseDataAddon stoData = FindStorage(ao.Type);
             if (stoData != null)
             {
                 ao.DataObjects.AddDataAddon("idle_res_storages", stoData);
                 ao.gameObject.AddComponent<SceneStorage>();
+                _buildingsBuilt.Add(ao.GetComponent<BaseSceneBuilding>());
             }
             BaseDataAddon resData = FindResStack(ao.Type);
             if (resData != null)
             {
                 ao.DataObjects.AddDataAddon("idle_res_stacks", resData);
                 ao.gameObject.AddComponent<SceneResStack>();
+            }
+            BaseDataAddon stubData = FindStub(ao.Type);
+            if (stubData != null)
+            {
+                ao.DataObjects.AddDataAddon("idle_stubs", stubData);
+                ao.gameObject.AddComponent<SceneStub>();
             }
         }
 
@@ -161,6 +191,22 @@ namespace EJROrbEngine.IdleGame
                 return _resStacks[type];
             return null;
         }
+        //próbuje dopasować wzorzec stuba budynku do podanego typu i jeśli mu się uda - zwraca go
+        public BaseDataAddon FindStub(string type)
+        {
+            if (_stubs.ContainsKey(type))
+                return _stubs[type];
+            return null;
+        }
+        //próbuje dopasować wzorzec dowolnego budynku do podanego typu i jeśli mu się uda - zwraca go
+        public BaseDataAddon FindAnyBuilding(string type)
+        {
+            if (_producers.ContainsKey(type))
+                return _producers[type];
+            if (_storages.ContainsKey(type))
+                return _storages[type];
+            return null;
+        }
 
         //refresh information about present storages - it will create a storage space for every resource
         public void RefreshStorage()
@@ -183,15 +229,14 @@ namespace EJROrbEngine.IdleGame
             _cumulatedResources.Clear();
             foreach (string type in newCumulatedStorage.Keys)
                 _cumulatedResources.Add(type, newCumulatedStorage[type]);
-
-            RefreshResUI();
-            
+            RefreshResUI();            
         }
 
         //refreshes values of resources on its UI
         public void RefreshResUI()
         {
-            foreach(ResourceData rd in _cumulatedResources.Values)
+            RefreshStubsLabels();
+            foreach (ResourceData rd in _cumulatedResources.Values)
             {
                 _idleResUI.RefreshResData(rd);
             }
@@ -203,13 +248,71 @@ namespace EJROrbEngine.IdleGame
             ResourceData rest = new ResourceData(val);
             if (_cumulatedResources.ContainsKey(val.Type))
             {
-                
                 if (_cumulatedResources[val.Type].CurrentValue + val.CurrentValue > _cumulatedResources[val.Type].MaximumValue)
-                    rest.CurrentValue = val.CurrentValue - _cumulatedResources[val.Type].FreeValue;
+                    rest.CurrentValue = _cumulatedResources[val.Type].FreeValue;
                 _cumulatedResources[val.Type] += val;
             }
+            else
+                rest.CurrentValue = BigInteger.Zero;
             RefreshResUI();
             return rest;
+        }
+        //how much levels could we buy for all storaged amount of resources
+        public int LevelsForResources(BaseSceneBuilding building)
+        {
+            List<ResourceData> resList = new List<ResourceData>();
+            foreach (ResourceData rd in _cumulatedResources.Values)
+                resList.Add(rd);
+            return building.LevelsForResources(resList);
+        }
+        //checks if all resources are sufficient to the costs
+        public bool FindIfEnoughResources(List<ResourceData> cost)
+        {
+            foreach (ResourceData rd in cost)
+            {
+                if (!_cumulatedResources.ContainsKey(rd.Type))
+                    return false;
+                if (_cumulatedResources[rd.Type].CurrentValue < rd.CurrentValue)
+                    return false;
+            }
+            return true;
+        }
+        //if possible - substract given resources from all resources. Returns true if substraction was possible and done)
+        public bool SubstractResourceIfPossible(List<ResourceData> cost)
+        {
+            //first check if all resources are sufficient before start any substraction
+            bool enough = FindIfEnoughResources(cost);
+            if (!enough)
+                return false;
+            foreach (ResourceData rd in cost)
+            {
+                _cumulatedResources[rd.Type].CurrentValue -= rd.CurrentValue;
+            }
+            RefreshResUI();
+            return true;
+        }
+        //finds if there is a building built on the scene with given type
+        public bool IsBuiltBuildingType(string type)
+        {
+            foreach (BaseSceneBuilding b in _buildingsBuilt)
+                if (b.Type == type)
+                    return true;
+            return false;
+        }
+        //refreshes stubs labels after built buildings list might be changed (for example after a building is produced)
+        public void RefreshStubsLabels()
+        {
+            SceneStub[] stList = FindObjectsOfType<SceneStub>();
+            foreach (SceneStub scst in stList)
+                scst.RefreshLabel();
+        }
+
+        //produce given building from the stub, remove stub
+        public void BuildBuilding(SceneStub stub)
+        {            
+            GameObject newBuilding = ActiveObjects.ActiveObjectsManager.Instance.CreateAvtiveObject(stub.TheTargetData.Type, stub.transform.position);
+            stub.GetComponent<ActiveObjects.ActiveObject>().RemoveFromGame();
+            RefreshStubsLabels();
         }
     }
 }

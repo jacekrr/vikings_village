@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace EJROrbEngine.IdleGame.UI
 {
-
+    //class responsible for main resource statistics UI
     public class IdleResUI : MonoBehaviour
     {
         private Dictionary<string, TextMeshProUGUI> _staticResTexts;           //labels of resource texts (key is a resource Type)

@@ -19,8 +19,8 @@ namespace EJROrbEngine.ActiveObjects
         {
             get
             {
-                if (StringsTranslator.HasString("ItemName" + Type))
-                    return StringsTranslator.GetString("ItemName" + Type);
+                if (StringsTranslator.HasString("AOName" + Type))
+                    return StringsTranslator.GetString("AOName" + Type);
                 else
                     return "<" + Type + ">";
             }
@@ -29,8 +29,8 @@ namespace EJROrbEngine.ActiveObjects
         {
             get
             {
-                if (StringsTranslator.HasString("ItemDesc" + Type))
-                    return StringsTranslator.GetString("ItemDesc" + Type);
+                if (StringsTranslator.HasString("AODesc" + Type))
+                    return StringsTranslator.GetString("AODesc" + Type);
                 else
                     return "<" + Type + ">";
             }

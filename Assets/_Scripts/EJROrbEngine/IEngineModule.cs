@@ -18,14 +18,17 @@ namespace EJROrbEngine
     {
         //called by GameManager when game is being loaded
         void OnLoad(IGameState gameState);
+        //called by GameManager before OnSave
+        void CleanupBeforeSave();
         //called by GameManager when game is being saved
         void OnSave(IGameState gameState);
         //called by GameManager when new game is starting 
         void OnNewGame();
         //called by GameManager on start
         void OnConfigure();
-
         //called by ActiveObject in order to add module components to the game object
         void OnConfigureObjectRequest(SceneObjects.PrefabTemplate ao);
+
+
     }
 }

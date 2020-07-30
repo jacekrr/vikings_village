@@ -8,16 +8,23 @@
 
 
 using ClientAbstract;
+using EJROrbEngine.ActiveObjects;
 using EJROrbEngine.SceneObjects;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace EJROrbEngine.IdleGame
 {
+ 
+
     public class SceneProducer : BaseSceneBuilding
     {
-        private float _secondTimer;
+        private float _productionTimer;
+        private float _outputInterval;
+        private string _outputPrefabName;
+        private ProductionPlace []_externalProductionPlaces;
 
         public override void SaveGame(IGameState gameState)
         {
@@ -29,33 +36,62 @@ namespace EJROrbEngine.IdleGame
             base.LoadGame(gameState);
          
         }
+        public override string ProductionInfo()
+        {
+            return String.Format(StringsTranslator.GetString("building_current_prod"), Level.ToString(), ProductionToString(Level), _outputInterval);
+        }
 
         protected override void OnAwake()
         {
             base.OnAwake();
             TheData = GetComponent<PrefabTemplate>().DataObjects.GetDataAddon("idle_producers");
+            _outputInterval = (float)TheData["outputInterval"];
+            _outputPrefabName = (string)TheData["outputPrefab"];
+            _externalProductionPlaces = gameObject.GetComponentsInChildren<ProductionPlace>();
+            if (_externalProductionPlaces == null)
+                Debug.LogError("No production place in " + gameObject.name);
         }
         protected override void OnStart()
         {
             base.OnStart();
-            _secondTimer = 1f;
-
-    
+            _productionTimer = _outputInterval;    
         }
         protected override void OnUpdate()
         {
             base.OnUpdate();
-            _secondTimer -= Time.deltaTime;
-            if (_secondTimer <= 0)
+            _productionTimer -= Time.deltaTime;
+            if (_productionTimer <= 0)
             {
-                _secondTimer = 1f;
-                OnSecond();
+                _productionTimer = _outputInterval;
+                OnProduce();
             }
         }
 
-        private void OnSecond()
+        private void OnProduce()
         {
-
+            // produce
+            List<ResourceData> production = GetProductionOnLevel(Level);
+            foreach (ResourceData rd in production)
+                rd.CurrentValue = rd.MaximumValue = rd.CurrentValue * (int)_outputInterval;
+            //find free production place to store the production (separately for every resource produced), if there's not enough of free space for producted resopurces some of them will be canceled
+            foreach (ResourceData producedRes in production)
+            {
+                ProductionPlace freeProductionPlace = null;
+                foreach(ProductionPlace pp in _externalProductionPlaces)
+                    if (pp.GetComponentInChildren<SceneResStack>() == null)
+                        freeProductionPlace = pp;
+                if(freeProductionPlace != null)  //there;s free place for this resource
+                {
+                    string resPrefabName = _outputPrefabName.Replace("[RES]", producedRes.Type);
+                    GameObject newStack = ActiveObjectsManager.Instance.CreateAvtiveObject(resPrefabName, freeProductionPlace.transform.position);
+                    //GameObject newStack = PrefabPool.Instance.GetPrefab(resPrefabName);
+                    newStack.transform.parent = freeProductionPlace.transform;
+                    newStack.transform.position = freeProductionPlace.transform.position;
+                    newStack.SetActive(true);
+                    newStack.GetComponent<PrefabTemplate>().Configure();
+                    newStack.GetComponent<SceneResStack>().SetProduction(producedRes);
+                }
+            }
         }
     }
 

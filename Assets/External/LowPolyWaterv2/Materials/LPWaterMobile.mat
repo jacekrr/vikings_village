@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: LPWaterMobile
-  m_Shader: {fileID: 4800000, guid: 8165be4dd0b12774d80426d906df9c38, type: 3}
+  m_Shader: {fileID: 4800000, guid: bfbd133c547c89945a7459eb198a1666, type: 3}
   m_ShaderKeywords: _DISTORT_ON _EMISSION _SHADING_FLAT _WAVES_OFF _ZWRITE_ON
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
@@ -57,6 +57,7 @@ Material:
     - _FoamSpeed: 0.3
     - _FoamSpread: 1
     - _FresPower: 1.5
+    - _Gloss: 0.6
     - _HQFoam: 0
     - _Height: 0.4
     - _Height_: 4
@@ -77,6 +78,7 @@ Material:
     - _Shadow: 0.6
     - _ShoreDistance: 0.5
     - _ShoreIntensity: 1
+    - _Smoothness: 1
     - _Specular: 92
     - _Speed: 0.5
     - _Speed_: 5

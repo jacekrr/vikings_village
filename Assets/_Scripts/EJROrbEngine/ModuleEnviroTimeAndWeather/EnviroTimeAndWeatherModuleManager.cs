@@ -34,6 +34,10 @@ namespace EJROrbEngine.EnviroTimeAndWeather
         {
             TimeComponent.LoadGame(gameState);
         }
+        public void CleanupBeforeSave()
+        {
+            // do nothing
+        }
         public void OnSave(IGameState gameState)
         {
             TimeComponent.SaveGame(gameState);

@@ -7,6 +7,12 @@
   <setting name="steamID">11111</setting>
   <setting name="preciseTargetFov">60</setting>
   <setting name="defaultTargetFov">50</setting>
+  <setting name="IdleCameraMoveMaxX">15</setting>
+  <setting name="IdleCameraMoveMinX">-15</setting>
+  <setting name="IdleCameraMoveMaxZ">10</setting>
+  <setting name="IdleCameraMoveMinZ">-10</setting>
+  <setting name="IdleCameraMoveMaxY">12</setting>
+  <setting name="IdleCameraMoveMinY">-12</setting>
 
   <setting name="usePlayerController">false</setting>
 

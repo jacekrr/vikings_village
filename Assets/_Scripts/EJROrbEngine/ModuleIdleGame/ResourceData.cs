@@ -6,6 +6,7 @@
 // **** This file is a part of an EJROrb engine used in projects: HerbalistSimulator, Gulag, Vikings Village, more info: http://ejr.com.pl
 // **** Copyrights: EJR Sp. z o.o.
 
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
@@ -16,51 +17,48 @@ namespace EJROrbEngine.IdleGame
     {
         //resource name/type
         public string Type { get; private set; }
+        public string TypeName { get { return StringsTranslator.GetString("ResName" + Type); } }
         //the current value shows how much resource is stockpiled in the object
-        private float _currentValue;
-        public float CurrentValue
+        private BigInteger _currentValue;
+        public BigInteger CurrentValue
         {
             get { return _currentValue; }
             set
             {
                 _currentValue = value;
-                if (_currentValue < 0) _currentValue = 0;
                 if (_currentValue > MaximumValue) _currentValue = MaximumValue;
             }
         }
         //rest between max and current value (free space in terms of resource storaging)
-        public float FreeValue
+        public BigInteger FreeValue
         {
             get { return MaximumValue - CurrentValue; }
-        }
-        //multiplier is number of power of 10s that should multiply the CurrentValue, for example CurrentValue==4.5 and Multiplier==3 means 4500 real value
-        public int Multiplier { get; private set; }
+        }       
         //the maximum value available to be stockpiled
-        public float MaximumValue { get; set; }
+        public BigInteger MaximumValue { get; set; }
 
         public ResourceData(string type)
         {
             Type = type;
-            Multiplier = 1;
+            MaximumValue = BigInteger.Zero;
+            CurrentValue = BigInteger.Zero;
         }
 
         public ResourceData(ResourceData val)
         {
             Type = val.Type;
-            Multiplier = val.Multiplier;
             MaximumValue = val.MaximumValue;
             CurrentValue = val.CurrentValue;
         }
         public void FromSaveGameValue(string dataStr)
         {
             string[] tokens = dataStr.Split(';');
-            if(tokens.Length == 3)
+            if(tokens.Length == 2)
             {
                 try
                 {
-                    MaximumValue = int.Parse(tokens[2]);
-                    Multiplier = int.Parse(tokens[1]);
-                    CurrentValue = int.Parse(tokens[0]);
+                    MaximumValue.FromSaveGameValue(tokens[1]);
+                    CurrentValue.FromSaveGameValue(tokens[0]);
                 } catch(System.Exception)
                 {
                     Debug.LogError("invalid format of " + dataStr);
@@ -70,14 +68,12 @@ namespace EJROrbEngine.IdleGame
         public string ToSaveGameValue()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(CurrentValue.ToString());
+            sb.Append(CurrentValue.ToSaveGameValue());
             sb.Append(";");
-            sb.Append(Multiplier.ToString());
-            sb.Append(";");
-            sb.Append(MaximumValue.ToString());
+            sb.Append(MaximumValue.ToSaveGameValue());
             return sb.ToString();
         }
-
+        
         // maths section, overriden operators
         public static ResourceData operator +(ResourceData a, ResourceData b)
         {
@@ -98,6 +94,20 @@ namespace EJROrbEngine.IdleGame
             rd.CurrentValue = a.CurrentValue - b.CurrentValue;
             return rd;
         }
-       
+
+        //readable info of resources list
+        public static string ListToString(List<ResourceData> lista)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (ResourceData rd in lista)
+            {
+                sb.Append(" ");
+                sb.Append(rd.CurrentValue.ToString());
+                sb.Append(" ");
+                sb.Append(rd.TypeName);
+            }
+            return sb.ToString();
+        }
+
     }
 }

@@ -66,6 +66,9 @@ namespace EJROrbEngine
         }
         public void SaveGame()
         {
+            foreach (Component module in _gameModules.Values)
+                (module as IEngineModule).CleanupBeforeSave();
+
             BaseSceneObject[] sds = GameObject.FindObjectsOfType<BaseSceneObject>();
             foreach (BaseSceneObject sd in sds)
                 sd.SaveGame(TheGameState);

@@ -25,7 +25,7 @@ namespace EJROrbEngine.TimeAndWeather
             GameObject sun = new GameObject();
             sun.name = "Sun";
             sun.AddComponent<Light>().type = LightType.Directional;
-            sun.GetComponent<Light>().intensity = 1.4f;
+            sun.GetComponent<Light>().intensity = 1f;
             sun.GetComponent<Light>().shadows = LightShadows.Hard;
             TimeComponent = GameManager.Instance.gameObject.AddComponent<BaseDayNightWeather>();
             TimeComponent.Sun = sun.GetComponent<Light>();
@@ -37,6 +37,10 @@ namespace EJROrbEngine.TimeAndWeather
         public void OnLoad(IGameState gameState)
         {
             TimeComponent.LoadGame(gameState);
+        }
+        public void CleanupBeforeSave()
+        {
+            // do nothing
         }
         public void OnSave(IGameState gameState)
         {

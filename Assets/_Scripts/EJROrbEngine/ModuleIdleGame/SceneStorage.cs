@@ -9,6 +9,7 @@
 
 using ClientAbstract;
 using EJROrbEngine.SceneObjects;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,6 +28,11 @@ namespace EJROrbEngine.IdleGame
         {
             base.LoadGame(gameState);
 
+        }
+
+        public override string ProductionInfo()
+        {
+            return String.Format(StringsTranslator.GetString("building_current_stor"), Level.ToString(), ProductionToString(Level));
         }
 
         protected override void OnAwake()

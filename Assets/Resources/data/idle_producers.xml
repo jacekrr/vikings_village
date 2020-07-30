@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-<attrTypes costL1="string" prodL1="string" qCost="float" qProd="float"/>
-<attrDefaults costL1="" prodL1=""/>
+<attrTypes costL1="string" prodL1="string" qCost="float" qProd="float" outputInterval="float" outputPrefab="string" bigUpgrade="int"/>
+<attrDefaults costL1="" prodL1="" qCost="1" qProd="1" outputInterval="1" outputPrefab="[RES]Stack" bigUpgrade="0"/>
 
 <idle_producers>
-  <entity type="Huts"  costL1="Gold=10;Food=10" prodL1="Vikings=1" qCost="1.65" qProd="1.5"/>
+  <entity type="Huts"  costL1="Food=10" prodL1="Vikings=2" qCost="1.65" qProd="1.25" outputInterval="5" outputPrefab="[RES]SmallStack" bigUpgrade="8"/>
+  <entity type="Hunter" costL1="Gold=10" prodL1="Food=2" qCost="1.65" qProd="1.25" outputInterval="5" outputPrefab="[RES]SmallStack" bigUpgrade="8"/>
+  <entity type="Market" costL1="Vikings=10" prodL1="Gold=2" qCost="1.65" qProd="1.25" outputInterval="5" outputPrefab="[RES]SmallStack" bigUpgrade="8"/>
   
 </idle_producers>
 </root>
