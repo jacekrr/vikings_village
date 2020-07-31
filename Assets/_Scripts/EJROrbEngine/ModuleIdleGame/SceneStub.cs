@@ -85,7 +85,7 @@ namespace EJROrbEngine.IdleGame
                 IdleGameModuleManager.Instance.BuildBuilding(this);
             }
         }
-        protected override void OnAwake()
+        public override void OnConfigure()
         {
             TheData = GetComponent<PrefabTemplate>().DataObjects.GetDataAddon("idle_stubs");
             _cost = BaseSceneBuilding.DecodeResConfigString((string)TheData["cost"]);
@@ -98,10 +98,16 @@ namespace EJROrbEngine.IdleGame
             }
             TheTargetData = IdleGameModuleManager.Instance.FindAnyBuilding(_targetPrefab);
         }
+        protected override void OnAwake()
+        {
+           
+        }
         protected override void OnStart()
         {
             TheLabel = gameObject.AddComponent<UI.SceneBuildingLabel>();
             TheLabel.TheBuilding = this;
+            if ((bool)TheData["autoBuild"] == true)
+                Build();
         }
         protected override void OnUpdate()
         {

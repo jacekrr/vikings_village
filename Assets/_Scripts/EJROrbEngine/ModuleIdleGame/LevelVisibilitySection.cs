@@ -14,11 +14,14 @@ namespace EJROrbEngine.IdleGame
     //this component will make whole gameobject and its children to be visible only if building that contains it is at least at certain level
     public class LevelVisibilitySection : MonoBehaviour
     {
-        public int MinLevel;
+        public int MinLevel = 0;
+        public int MaxLevel = int.MaxValue;
         public void RefreshVisibility()
         {
             if (transform.parent != null && transform.parent.GetComponent<BaseSceneBuilding>() != null)
-                gameObject.SetActive(transform.parent.GetComponent<BaseSceneBuilding>().Level >= MinLevel);
+                gameObject.SetActive(transform.parent.GetComponent<BaseSceneBuilding>().Level >= MinLevel && transform.parent.GetComponent<BaseSceneBuilding>().Level <= MaxLevel);
+            if (transform.parent != null && transform.parent.GetComponent<SceneResStack>() != null)
+                gameObject.SetActive(transform.parent.GetComponent<SceneResStack>().FillPercent >= MinLevel && transform.parent.GetComponent<SceneResStack>().FillPercent <= MaxLevel);
         }
         void Start()
         {

@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <attrTypes  cost="string" targetPrefab="string" requires="string"/>
-  <attrDefaults cost="" targetPrefab=""  requires=""/>
+  <attrTypes  cost="string" targetPrefab="string" requires="string" autoBuild="bool"/>
+  <attrDefaults cost="" targetPrefab=""  requires="" autoBuild="false"/>
 
   <idle_stubs>
+    <entity type="BaseStorageStub" cost="" targetPrefab="BaseStorage" requires="" autoBuild="true"/>
     <entity type="CentralPlaceStub" cost="Gold=5;Vikings=5;Food=5" targetPrefab="CentralPlace" requires=""/>
     <entity type="HutsStub"  cost="Food=20" targetPrefab="Huts" requires="CentralPlace"/>
     <entity type="HunterStub"  cost="Gold=20" targetPrefab="Hunter" requires="CentralPlace"/>

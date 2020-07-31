@@ -4,7 +4,7 @@
 <attrDefaults costL1="" prodL1=""  bigUpgrade="0"/>
 
 <idle_res_storages>
-  <entity type="BaseStorage" costL1="" prodL1="Gold=5;Vikings=5;Food=5" qCost="1" qProd="1"/>
+  <entity type="BaseStorage" costL1="" prodL1="Gold=5;Vikings=10;Food=15" qCost="1" qProd="1"/>
   <entity type="CentralPlace" costL1="Gold=0.0025;Vikings=0.25;Food=0.25" prodL1="Gold=500;Vikings=500;Food=500" qCost="1.6" qProd="1.6" bigUpgrade="10"/>
   <entity type="Treasury" costL1="Food=60;Vikings=60" prodL1="Gold=120" qCost="1.4" qProd="1.2" bigUpgrade="12"/>
   <entity type="Tavern" costL1="Gold=120" prodL1="Food=60;Vikings=60" qCost="1.4" qProd="1.2" bigUpgrade="12"/>

@@ -34,22 +34,32 @@ namespace EJROrbEngine.IdleGame
         {
             return String.Format(StringsTranslator.GetString("building_current_stor"), Level.ToString(), ProductionToString(Level));
         }
-
+        public override void LevelUp(int aLevels)
+        {
+            base.LevelUp(aLevels);
+            IdleGameModuleManager.Instance.AddNewStorage(GetProductionOnLevel(Level - 1), GetProductionOnLevel(Level));
+        }
+        public override void OnConfigure()
+        {
+            TheData = GetComponent<PrefabTemplate>().DataObjects.GetDataAddon("idle_res_storages");
+            base.OnConfigure();
+        }
         protected override void OnAwake()
         {
-            base.OnAwake();
-            TheData = GetComponent<PrefabTemplate>().DataObjects.GetDataAddon("idle_res_storages");
+          
+            base.OnAwake();            
         }
         protected override void OnStart()
         {
             base.OnStart();
-            IdleGameModuleManager.Instance.RefreshStorage();
+            
 
         }
         protected override void OnUpdate()
         {
             base.OnUpdate();
         }
+
     }
 
 }

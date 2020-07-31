@@ -37,7 +37,7 @@ namespace EJROrbEngine.SceneObjects
         {
 
         }
-
+        public abstract void OnConfigure();
         protected abstract void OnAwake();
         protected abstract void OnStart();
         protected abstract void OnUpdate();
@@ -50,6 +50,7 @@ namespace EJROrbEngine.SceneObjects
         {
             _AOComponent = GetComponent<ActiveObject>();
             OnStart();
+            LoadGame(GameManager.Instance.TheGameState);
         }
         private void Update()
         {

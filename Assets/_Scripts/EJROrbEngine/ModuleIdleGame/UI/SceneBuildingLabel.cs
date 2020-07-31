@@ -34,8 +34,11 @@ namespace EJROrbEngine.IdleGame.UI
             if (_firstUpdate)
             {
                 RefreshLabelText();
-                Transform labelanchor = transform.Find("LabelAnchor");
-                TheLabelText.transform.position = labelanchor != null ? labelanchor.position : TheBuilding.transform.position;
+                CIBuildingLabel labelanchor = transform.GetComponentInChildren<CIBuildingLabel>();
+                if (labelanchor != null)
+                    TheLabelText.transform.position = labelanchor != null ? labelanchor.transform.position : TheBuilding.transform.position;
+                else
+                    TheLabelText.gameObject.SetActive(false);
                 _firstUpdate = false;
             }
         }

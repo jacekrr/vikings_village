@@ -24,7 +24,7 @@ namespace EJROrbEngine.IdleGame
         private float _productionTimer;
         private float _outputInterval;
         private string _outputPrefabName;
-        private ProductionPlace []_externalProductionPlaces;
+        private CIProductionPlace []_externalProductionPlaces;
 
         public override void SaveGame(IGameState gameState)
         {
@@ -41,13 +41,18 @@ namespace EJROrbEngine.IdleGame
             return String.Format(StringsTranslator.GetString("building_current_prod"), Level.ToString(), ProductionToString(Level), _outputInterval);
         }
 
-        protected override void OnAwake()
+        public override void OnConfigure()
         {
-            base.OnAwake();
             TheData = GetComponent<PrefabTemplate>().DataObjects.GetDataAddon("idle_producers");
+            base.OnConfigure();
             _outputInterval = (float)TheData["outputInterval"];
             _outputPrefabName = (string)TheData["outputPrefab"];
-            _externalProductionPlaces = gameObject.GetComponentsInChildren<ProductionPlace>();
+        }
+        protected override void OnAwake()
+        {
+            base.OnAwake();            
+         
+            _externalProductionPlaces = gameObject.GetComponentsInChildren<CIProductionPlace>();
             if (_externalProductionPlaces == null)
                 Debug.LogError("No production place in " + gameObject.name);
         }
@@ -76,8 +81,8 @@ namespace EJROrbEngine.IdleGame
             //find free production place to store the production (separately for every resource produced), if there's not enough of free space for producted resopurces some of them will be canceled
             foreach (ResourceData producedRes in production)
             {
-                ProductionPlace freeProductionPlace = null;
-                foreach(ProductionPlace pp in _externalProductionPlaces)
+                CIProductionPlace freeProductionPlace = null;
+                foreach(CIProductionPlace pp in _externalProductionPlaces)
                     if (pp.GetComponentInChildren<SceneResStack>() == null)
                         freeProductionPlace = pp;
                 if(freeProductionPlace != null)  //there;s free place for this resource

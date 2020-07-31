@@ -12,8 +12,8 @@ using UnityEngine;
 namespace EJROrbEngine.IdleGame
 {
 
-    //component that is place where the production from SceneProducer is located
-    public class ProductionPlace : MonoBehaviour
+    //component that indicate place where the building's label is located
+    public class CIBuildingLabel : MonoBehaviour
     {
 
     }

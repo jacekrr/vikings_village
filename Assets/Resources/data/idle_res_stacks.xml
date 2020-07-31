@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-<attrTypes resName="string" defaultAmmount="string" autoGrab="float" />
-<attrDefaults resName="Gold" defaultAmmount="0" autoGrab="0"/>
-
-<idle_res_stacks>
-  <entity type="FoodSmallStack" resName="Food" defaultAmmount="15"  />
-  <entity type="GoldSmallStack" resName="Gold" defaultAmmount="15" />
-  <entity type="VikingsSmallStack" resName="Vikings" defaultAmmount="15" />
+<attrTypes resName="string" defaultAmmount="string" autoGrab="float" labelColor="string" labelDirection="string" />
+<attrDefaults resName="Gold" defaultAmmount="0" autoGrab="0" labelColor="0.5,0.5,0.5" labelDirection="0,0,0"/>
+  
+  <idle_res_stacks>
+  <entity type="FoodSmallStack" resName="Food" defaultAmmount="15" labelColor="0.554,0.687,0.265"  labelDirection="0,0,-0.04" />
+  <entity type="GoldSmallStack" resName="Gold" defaultAmmount="15" labelColor="0.773,0.644,0.144" labelDirection="0,0,-0.04" />
+  <entity type="VikingsSmallStack" resName="Vikings" defaultAmmount="15"  labelColor="0.285,0.421,0.629" labelDirection="0,0,-0.04"/>
 </idle_res_stacks>
 </root>

@@ -51,6 +51,10 @@ namespace EJROrbEngine.NPCSystem
                 _attacker.PerformScanHit();
         }
 
+        public override void OnConfigure()
+        {
+
+        }
         protected override void OnAwake()
         {
 

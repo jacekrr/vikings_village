@@ -47,6 +47,8 @@
   <string name="BuildingDescGoldSmallStack">Zasób Złota</string>
   <string name="BuildingNameVikingsSmallStack">Zasób Wikingów</string>
   <string name="BuildingDescVikingsSmallStack">Zasób Wikingów</string>
+  <string name="BuildingNameBaseStorage">Magazyn</string>
+  <string name="BuildingDescBaseStorage">Magazyn</string>
 
 
 </resources>

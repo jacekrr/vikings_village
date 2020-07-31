@@ -71,12 +71,7 @@ namespace EJROrbEngine.IdleGame
 
         public void CleanupBeforeSave()
         {
-            SceneResStack[] resStacks = FindObjectsOfType<SceneResStack>();
-            foreach (SceneResStack srs in resStacks)
-            {
-                srs.ConsumeStack();
-                srs.GetComponent<ActiveObjects.ActiveObject>().RemoveFromGame();
-            }
+    
         }
         public void OnNewGame()
         {
@@ -147,6 +142,7 @@ namespace EJROrbEngine.IdleGame
             {
                 ao.DataObjects.AddDataAddon("idle_producers", prodData);
                 ao.gameObject.AddComponent<SceneProducer>();
+                ao.GetComponent<SceneProducer>().OnConfigure();
                 _buildingsBuilt.Add(ao.GetComponent<BaseSceneBuilding>());
             }
             BaseDataAddon stoData = FindStorage(ao.Type);
@@ -154,6 +150,7 @@ namespace EJROrbEngine.IdleGame
             {
                 ao.DataObjects.AddDataAddon("idle_res_storages", stoData);
                 ao.gameObject.AddComponent<SceneStorage>();
+                ao.GetComponent<SceneStorage>().OnConfigure();
                 _buildingsBuilt.Add(ao.GetComponent<BaseSceneBuilding>());
             }
             BaseDataAddon resData = FindResStack(ao.Type);
@@ -161,12 +158,14 @@ namespace EJROrbEngine.IdleGame
             {
                 ao.DataObjects.AddDataAddon("idle_res_stacks", resData);
                 ao.gameObject.AddComponent<SceneResStack>();
+                ao.GetComponent<SceneResStack>().OnConfigure();
             }
             BaseDataAddon stubData = FindStub(ao.Type);
             if (stubData != null)
             {
                 ao.DataObjects.AddDataAddon("idle_stubs", stubData);
                 ao.gameObject.AddComponent<SceneStub>();
+                ao.GetComponent<SceneStub>().OnConfigure();
             }
         }
 
@@ -208,29 +207,31 @@ namespace EJROrbEngine.IdleGame
             return null;
         }
 
-        //refresh information about present storages - it will create a storage space for every resource
-        public void RefreshStorage()
+        //adds new storage space to cumulated resources, oldstorage is storage before and newstorage is storage now
+        public void AddNewStorage(List<ResourceData> oldStorageList, List<ResourceData> newStorageList)
         {
-            SceneStorage[] allStorages = FindObjectsOfType<SceneStorage>();
-            Dictionary<string, ResourceData> newCumulatedStorage = new Dictionary<string, ResourceData>();
-            foreach (SceneStorage store in allStorages)
+            foreach (ResourceData newStorage in newStorageList)
             {
-                List<ResourceData> storeProduction = store.GetProductionOnLevel(store.Level);
-                foreach (ResourceData rd in storeProduction)
+                ResourceData oldStorage = new ResourceData("0 0");
+                if(oldStorageList != null)
+                    foreach (ResourceData stor in oldStorageList)
+                        if (stor.Type == newStorage.Type)
+                            oldStorage = stor;
+                if (!_cumulatedResources.ContainsKey(newStorage.Type))
                 {
-                    if (!newCumulatedStorage.ContainsKey(rd.Type))
-                        newCumulatedStorage.Add(rd.Type, new ResourceData(rd.Type));
-                    newCumulatedStorage[rd.Type].MaximumValue += rd.MaximumValue;
+                    ResourceData rd = new ResourceData(newStorage.Type);
+                    rd.MaximumValue = newStorage.MaximumValue;
+                    _cumulatedResources.Add(newStorage.Type, rd);
+                }
+                else
+                {
+                    _cumulatedResources[newStorage.Type].MaximumValue += newStorage.MaximumValue;
+                    _cumulatedResources[newStorage.Type].MaximumValue -= oldStorage.MaximumValue;
                 }
             }
-            foreach (ResourceData newData in newCumulatedStorage.Values)
-                if (_cumulatedResources.ContainsKey(newData.Type))
-                    newData.CurrentValue = _cumulatedResources[newData.Type].CurrentValue;
-            _cumulatedResources.Clear();
-            foreach (string type in newCumulatedStorage.Keys)
-                _cumulatedResources.Add(type, newCumulatedStorage[type]);
-            RefreshResUI();            
+            RefreshResUI();
         }
+       
 
         //refreshes values of resources on its UI
         public void RefreshResUI()
@@ -313,6 +314,11 @@ namespace EJROrbEngine.IdleGame
             GameObject newBuilding = ActiveObjects.ActiveObjectsManager.Instance.CreateAvtiveObject(stub.TheTargetData.Type, stub.transform.position);
             stub.GetComponent<ActiveObjects.ActiveObject>().RemoveFromGame();
             RefreshStubsLabels();
+            newBuilding.GetComponent<PrefabTemplate>().Configure();
+            if (newBuilding.GetComponent<SceneStorage>() != null)
+            {
+                AddNewStorage(null, newBuilding.GetComponent<SceneStorage>().GetProductionOnLevel(1));
+            }
         }
     }
 }

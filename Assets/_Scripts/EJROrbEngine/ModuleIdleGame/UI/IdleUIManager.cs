@@ -21,6 +21,7 @@ namespace EJROrbEngine.IdleGame.UI
         public IdleBuildingInfoUI BuildingInfoUI;
         public IdleBuildingBuildUI BuildingBuildUI;
         public GameObject BuildingLabelTemplate;
+        public GameObject ResourceLabelTemplate;
 
         private void Awake()
         {
@@ -35,15 +36,19 @@ namespace EJROrbEngine.IdleGame.UI
             BuildingInfoUI = FindObjectOfType<IdleBuildingInfoUI>();
             BuildingBuildUI = FindObjectOfType<IdleBuildingBuildUI>();
             BuildingLabelTemplate = GameObject.Find("BuildingLabelTemplate");
+            ResourceLabelTemplate = GameObject.Find("ResourceLabelTemplate");
             if (BuildingInfoUI == null)
                 Debug.LogError("BuildingInfoUI is null in IdleUIManager");
             if (BuildingBuildUI == null)
                 Debug.LogError("BuildingBuildUI is null in IdleUIManager");
             if (BuildingLabelTemplate == null)
                 Debug.LogError("BuildingLabelTemplate is null in IdleUIManager");
+            if (ResourceLabelTemplate == null)
+                Debug.LogError("ResourceLabelTemplate is null in IdleUIManager");
             BuildingInfoUI.Hide();
             BuildingBuildUI.Hide();
             BuildingLabelTemplate.gameObject.SetActive(false);
+            ResourceLabelTemplate.gameObject.SetActive(false);
         }
 
         protected override void LookTargetChanged()

@@ -84,10 +84,13 @@ namespace EJROrbEngine.FPPGame
                 Health = gameState.GetFloatKey("dh_" + _AOComponent.UniqueID.ToString());
 
         }
-
-        protected override void OnAwake()
+        public override void OnConfigure()
         {
             DestructibleData = GetComponent<PrefabTemplate>().DataObjects.GetDataAddon("destructibles");
+        }
+        protected override void OnAwake()
+        {
+            
         }
 
         protected override void OnStart()

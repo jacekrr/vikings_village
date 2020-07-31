@@ -122,6 +122,7 @@ namespace EJROrbEngine.FPPGame
                 ao.DataObjects.AddDataAddon("items", itemData);
                 if(ao.gameObject.GetComponent< SceneItem>() == null)
                     ao.gameObject.AddComponent<SceneItem>();
+                ao.gameObject.GetComponent<SceneItem>().OnConfigure();
             }
             BaseDataAddon destrData = FindDestructible(ao.Type);
             if (destrData != null)
@@ -129,6 +130,7 @@ namespace EJROrbEngine.FPPGame
                 ao.DataObjects.AddDataAddon("destructibles", destrData);
                 if (ao.gameObject.GetComponent<SceneDestructible>() == null)
                     ao.gameObject.AddComponent<SceneDestructible>();
+                ao.gameObject.GetComponent<SceneDestructible>().OnConfigure();
             }
             BaseDataAddon weapData = FindWeapon(ao.Type);
             if (weapData != null)
@@ -136,6 +138,7 @@ namespace EJROrbEngine.FPPGame
                 ao.DataObjects.AddDataAddon("weapons", weapData);
                 if (ao.gameObject.GetComponent<SceneWeapon>() == null)
                     ao.gameObject.AddComponent<SceneWeapon>();
+                ao.gameObject.GetComponent<SceneWeapon>().OnConfigure();
                 SceneWeaponHitter[] wphs = ao.gameObject.GetComponentsInChildren<SceneWeaponHitter>();
                 foreach (SceneWeaponHitter swh in wphs)
                     swh.RealWeapon = ao.gameObject.GetComponent<SceneWeapon>();

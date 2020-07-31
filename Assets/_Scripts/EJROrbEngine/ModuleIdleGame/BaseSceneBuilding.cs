@@ -197,7 +197,7 @@ namespace EJROrbEngine.IdleGame
             return retList;
         }
         //upgrade aLevels levels (it will calculate if every level upgrade is possible and do upgrade one by one for every possible level)
-        public void LevelUp(int aLevels)
+        public virtual void LevelUp(int aLevels)
         {
             for(int i = 0; i < aLevels; i++)
             {
@@ -207,19 +207,23 @@ namespace EJROrbEngine.IdleGame
             }
             RefreshLevelVisibilitySections();
         }
-        protected override void OnAwake()
-        {
 
-        }
-
-        protected override void OnStart()
+        public override void OnConfigure()
         {
-            Level = 1;
+            
             _costLevel1 = DecodeResConfigString((string)TheData["costL1"]);
             _prodLevel1 = DecodeResConfigString((string)TheData["prodL1"]);
             QCost = (float)TheData["qCost"];
             QProd = (float)TheData["qProd"];
             BigUpgrade = (int)TheData["bigUpgrade"];
+        }
+        protected override void OnAwake()
+        {
+        }
+
+        protected override void OnStart()
+        {
+            Level = 1;
             TheLabel = gameObject.AddComponent<UI.SceneBuildingLabel>();
             TheLabel.TheBuilding = this;
             _visSections = transform.GetComponentsInChildren<LevelVisibilitySection>();
@@ -235,7 +239,6 @@ namespace EJROrbEngine.IdleGame
         }
         private void RefreshLevelVisibilitySections()
         {
-
             foreach (LevelVisibilitySection lvs in _visSections)
                 lvs.RefreshVisibility();
         }

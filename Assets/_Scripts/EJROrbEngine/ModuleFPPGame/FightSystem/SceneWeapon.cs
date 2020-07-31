@@ -101,7 +101,10 @@ namespace EJROrbEngine.SceneObjects
                     GetComponent<AudioSystem.AudioSourceArray>().PlayRandomAudio();
             }
         }
-
+        public override void OnConfigure()
+        {
+            
+        }
         protected override void OnAwake()
         {
 
